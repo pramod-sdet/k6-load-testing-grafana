@@ -1,0 +1,90 @@
+{
+  "smoke": {
+    "description": "Smoke test - minimal load to verify basic functionality",
+    "stages": [
+   { "duration": "30s", "target": 3 },
+   { "duration": "1m", "target": 3 },
+   { "duration": "30s", "target": 0 }
+],
+
+  "thresholds": {
+    "http_req_duration": ["p(95)<2000"],
+    "checks": ["rate>0.95"],
+    "authentication_rate": ["rate>0.95"],
+    "successfulOrders": ["count>0"]
+  }
+  },
+  "load": {
+    "description": "Load test - normal expected traffic",
+    "stages": [
+      { "duration": "2m", "target": 2 },
+      { "duration": "5m", "target": 2 },
+      { "duration": "2m", "target": 2 },
+      { "duration": "5m", "target": 2 },
+      { "duration": "2m", "target": 1 },
+      { "duration": "3m", "target": 0 }
+    ],
+    "thresholds": {
+      "http_req_duration": ["p(90)<3000", "p(95)<4000"],
+      "checks": ["rate>0.90"],
+      "authentication_rate": ["rate>0.95"],
+      "http_req_duration{name:create_order}": ["p(95)<1500"],
+      "group_duration{group:::Order Management}": ["avg<1000"],
+      "successfulOrders": ["count>10"]
+    }
+  },
+  "stress": {
+    "description": "Stress test - peak traffic and beyond",
+    "stages": [
+      { "duration": "2m", "target": 10 },
+      { "duration": "5m", "target": 20 },
+      { "duration": "2m", "target": 50 },
+      { "duration": "5m", "target": 50 },
+      { "duration": "2m", "target": 100 },
+      { "duration": "5m", "target": 100 },
+      { "duration": "10m", "target": 0 }
+    ],
+    "thresholds": {
+      "http_req_duration": ["p(90)<5000", "p(95)<8000"],
+      "checks": ["rate>0.85"],
+      "authentication_rate": ["rate>0.90"],
+      "http_req_duration{name:create_order}": ["p(95)<3000"],
+      "group_duration{group:::Order Management}": ["avg<2000"],
+      "successfulOrders": ["count>25"]
+    }
+  },
+  "spike": {
+    "description": "Spike test - sudden traffic bursts",
+    "stages": [
+      { "duration": "10s", "target": 10 },
+      { "duration": "1m", "target": 10 },
+      { "duration": "10s", "target": 50 },
+      { "duration": "3m", "target": 50 },
+      { "duration": "10s", "target": 10 },
+      { "duration": "3m", "target": 10 },
+      { "duration": "10s", "target": 0 }
+    ],
+    "thresholds": {
+      "http_req_duration": ["p(90)<6000"],
+      "checks": ["rate>0.80"],
+      "authentication_rate": ["rate>0.85"],
+      "successfulOrders": ["count>15"]
+    }
+  },
+  "soak": {
+    "description": "Soak test - extended duration at moderate load",
+    "stages": [
+      { "duration": "2m", "target": 10 },
+      { "duration": "3h", "target": 10 },
+      { "duration": "2m", "target": 0 }
+    ],
+    "thresholds": {
+      "http_req_duration": ["p(90)<3000", "p(95)<4000"],
+      "checks": ["rate>0.92"],
+      "authentication_rate": ["rate>0.95"],
+      "http_req_duration{name:create_order}": ["p(95)<1500"],
+      "group_duration{group:::Order Management}": ["avg<1000"],
+      "successfulOrders": ["count>100"]
+    }
+  }
+}
