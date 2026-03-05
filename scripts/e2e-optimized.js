@@ -191,4 +191,5 @@ export default function (data) {
 }
 
 export function teardown(data) {
+     console.log("k6 test execution completed successfully.");
 }
